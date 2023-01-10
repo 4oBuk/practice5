@@ -1,5 +1,7 @@
 package com.chornobuk.practice5.services;
 
-public interface ArtistsService {
+import com.chornobuk.practice5.entities.Artist;
 
+public interface ArtistsService {
+    Iterable<Artist> getAllArtists();
 }
