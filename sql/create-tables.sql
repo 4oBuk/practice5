@@ -1,8 +1,8 @@
 create table artist (
     id int primary key auto_increment,
-    email nvarchar(125) not null,
+    email nvarchar(125) unique not null,
     password varchar(128) not null,
-    nickname nvarchar(100) not null,
+    nickname nvarchar(100) unique not null,
     registrationDate datetime not null
 );
 
