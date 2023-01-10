@@ -6,7 +6,7 @@ create table artist (
     registrationDate datetime not null
 );
 
-create table art(
+create table illustration(
     id int primary key auto_increment,
     artistId int,
     name nvarchar(200) not null,
