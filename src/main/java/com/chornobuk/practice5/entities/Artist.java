@@ -2,6 +2,9 @@ package com.chornobuk.practice5.entities;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -9,9 +12,14 @@ import jakarta.persistence.Id;
 public class Artist {
     @Id
     private Long id;
+
     private String email;
+
+    @JsonProperty(access = Access.WRITE_ONLY)
     private String password;
+
     private String nickname;
+
     private LocalDateTime registrationDate;
 
     public Artist() {

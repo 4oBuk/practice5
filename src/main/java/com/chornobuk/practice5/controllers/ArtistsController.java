@@ -18,8 +18,7 @@ public class ArtistsController {
     }
 
     @GetMapping
-    public Artist getAllArtistById() {
-        // TODO
-        return null;
+    public Iterable<Artist> getAllArtists() {
+        return artistsService.getAllArtists();
     }
 }
