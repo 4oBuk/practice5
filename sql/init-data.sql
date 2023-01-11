@@ -1,4 +1,4 @@
-insert into artist(email, password, nickname, registrationDate)
+insert into artist(email, password, nickname, registration_date)
 values ('artist1@art.com', 'artist1', 'artist1', now()),
        ('artist2@art.com', 'artist2', 'artist2', now()),
        ('artist3@art.com', 'artist3', 'artist3', now()),
@@ -23,7 +23,7 @@ values ('artist1@art.com', 'artist1', 'artist1', now()),
        ('artist22@art.com', 'artist22', 'artist22', now()),
        ('artist23@art.com', 'artist23', 'artist23', now());
 
-insert into illustration (artistId, name, imageUrl, createdAt)
+insert into illustration (artist_id, name, image_url, created_at)
 values (1, 'illustration1.2', 'url', now()),
        (1, 'illustration1.3', 'url', now()),
        (1, 'illustration1.4', 'url', now()),

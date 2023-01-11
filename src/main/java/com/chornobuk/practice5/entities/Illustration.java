@@ -2,8 +2,16 @@ package com.chornobuk.practice5.entities;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
+import org.hibernate.annotations.DynamicUpdate;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -12,10 +20,12 @@ import jakarta.persistence.ManyToOne;
 public class Illustration {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artistId", referencedColumnName = "id")
+    @JoinColumn(name = "artist_id", referencedColumnName = "id", updatable = false)
+    @JsonProperty(access = Access.WRITE_ONLY)
     private Artist artist;
 
     private String name;
