@@ -5,9 +5,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
-import org.hibernate.annotations.DynamicUpdate;
-
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -30,8 +28,10 @@ public class Illustration {
 
     private String name;
 
+    @Column(updatable = false)
     private String imageUrl;
 
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     public Illustration(Long id, Artist artist, String name, String imageUrl, LocalDateTime createdAt) {
