@@ -1,5 +1,7 @@
 package com.chornobuk.practice5.services.impl;
 
+import java.time.LocalDateTime;
+
 import com.chornobuk.practice5.entities.Illustration;
 import com.chornobuk.practice5.services.IllustrationsService;
 import com.chornobuk.practice5.repositories.IllustrationsRepository;
@@ -18,6 +20,7 @@ public class IllustrationsServiceImpl implements IllustrationsService {
 
     @Override
     public Illustration createIllustration(Illustration illustration) {
+        illustration.setCreatedAt(LocalDateTime.now());
         return illustrationsRepository.save(illustration);
     }
 
