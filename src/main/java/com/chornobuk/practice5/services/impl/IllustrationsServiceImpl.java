@@ -2,28 +2,33 @@ package com.chornobuk.practice5.services.impl;
 
 import com.chornobuk.practice5.entities.Illustration;
 import com.chornobuk.practice5.services.IllustrationsService;
+import com.chornobuk.practice5.repositories.IllustrationsRepository;
+
 
 import org.springframework.stereotype.Service;
 
 @Service
 public class IllustrationsServiceImpl implements IllustrationsService {
 
+    private IllustrationsRepository illustrationsRepository;
+
+    public IllustrationsServiceImpl(IllustrationsRepository illustrationsRepository) {
+       this.illustrationsRepository = illustrationsRepository;
+    }
+
     @Override
-    public Illustration createIllustration() {
-        // TODO Auto-generated method stub
-        return null;
+    public Illustration createIllustration(Illustration illustration) {
+        return illustrationsRepository.save(illustration);
     }
 
     @Override
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
-
+       illustrationsRepository.deleteById(id);
     }
 
     @Override
     public Illustration getById(Long id) {
-        // TODO Auto-generated method stub
-        return null;
+        return illustrationsRepository.findById(id).get();
     }
 
     @Override
@@ -33,9 +38,8 @@ public class IllustrationsServiceImpl implements IllustrationsService {
     }
 
     @Override
-    public Illustration updateIllustration() {
-        // TODO Auto-generated method stub
-        return null;
+    public Illustration updateIllustration(Illustration illustration) {
+        return illustrationsRepository.save(illustration);
     }
 
 }

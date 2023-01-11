@@ -7,9 +7,9 @@ public interface IllustrationsService {
 
     public void deleteById(Long id);
 
-    public Illustration updateIllustration();
+    public Illustration updateIllustration(Illustration illustration);
 
-    public Illustration createIllustration();
+    public Illustration createIllustration(Illustration illustration);
 
     public Iterable<Illustration> getPaginatedIllustrations(String artist, String name, int page);
 }
