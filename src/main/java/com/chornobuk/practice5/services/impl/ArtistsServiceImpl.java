@@ -6,14 +6,14 @@ import com.chornobuk.practice5.services.ArtistsService;
 
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class ArtistsServiceImpl implements ArtistsService {
 
-    private ArtistsRepository artistsRepository;
+    private final ArtistsRepository artistsRepository;
 
-    public ArtistsServiceImpl(ArtistsRepository artistsRepository) {
-        this.artistsRepository = artistsRepository;
-    }
     @Override
     public Iterable<Artist> getAllArtists() {
         return artistsRepository.findAll();

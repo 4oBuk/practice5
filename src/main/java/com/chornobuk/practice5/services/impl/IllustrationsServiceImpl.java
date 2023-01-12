@@ -9,14 +9,13 @@ import com.chornobuk.practice5.repositories.IllustrationsRepository;
 
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class IllustrationsServiceImpl implements IllustrationsService {
 
-    private IllustrationsRepository illustrationsRepository;
-
-    public IllustrationsServiceImpl(IllustrationsRepository illustrationsRepository) {
-       this.illustrationsRepository = illustrationsRepository;
-    }
+    private final IllustrationsRepository illustrationsRepository;
 
     @Override
     public Illustration createIllustration(Illustration illustration) {

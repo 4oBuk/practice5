@@ -15,15 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
+
 @RestController
+@AllArgsConstructor
 @RequestMapping("illustrations")
 public class IllustrationsController {
 
-    private IllustrationsService illustrationsService;
-
-    public IllustrationsController(IllustrationsService illustrationsService) {
-        this.illustrationsService = illustrationsService;
-    }
+    private final IllustrationsService illustrationsService;
 
     @GetMapping("/{id}")
     public Illustration getIllustrationById(@PathVariable Long id) {
