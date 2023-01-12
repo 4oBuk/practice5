@@ -12,6 +12,7 @@ create table illustration(
     name nvarchar(200) not null,
     image_url nvarchar(2048) not null,
     created_at datetime not null,
+    ai_generated boolean not null,
     foreign key (artist_id) references artist(id)
 );
 
