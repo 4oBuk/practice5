@@ -1,7 +1,9 @@
 package com.chornobuk.practice5.controllers;
 
 import com.chornobuk.practice5.entities.Illustration;
+import com.chornobuk.practice5.entities.Views;
 import com.chornobuk.practice5.services.IllustrationsService;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,12 +33,14 @@ public class IllustrationsController {
     }
 
     @PostMapping
-    public Illustration createNewIllustration(@RequestBody @Valid Illustration illustration) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Illustration createIllustration(@RequestBody @Valid Illustration illustration) {
         return illustrationsService.createIllustration(illustration);
     }
 
+    
     @PutMapping
-    public Illustration updateIllustration(@RequestBody @Valid Illustration illustration) {
+    public Illustration updateIllustration(@RequestBody @Valid @JsonView(Views.IllustrationCreate.class) Illustration illustration) {
         return illustrationsService.updateIllustration(illustration);
     }
 

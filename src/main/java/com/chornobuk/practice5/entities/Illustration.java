@@ -3,6 +3,7 @@ package com.chornobuk.practice5.entities;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import jakarta.persistence.Column;
@@ -32,12 +33,14 @@ public class Illustration {
     private Long id;
 
     @NotNull
+    @JsonView(Views.IllustrationCreate.class)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", referencedColumnName = "id", updatable = false)
     @JsonProperty(access = Access.WRITE_ONLY)
     private Artist artist;
 
     @NotBlank
+    @JsonView(Views.IllustrationCreate.class)
     private String name;
 
     @Column(updatable = false)

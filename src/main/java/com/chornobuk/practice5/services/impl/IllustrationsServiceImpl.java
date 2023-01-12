@@ -20,6 +20,7 @@ public class IllustrationsServiceImpl implements IllustrationsService {
     @Override
     public Illustration createIllustration(Illustration illustration) {
         illustration.setCreatedAt(LocalDateTime.now());
+        illustration.setImageUrl("url");
         return illustrationsRepository.save(illustration);
     }
 
