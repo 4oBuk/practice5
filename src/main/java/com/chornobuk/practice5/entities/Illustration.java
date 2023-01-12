@@ -13,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,11 +31,13 @@ public class Illustration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", referencedColumnName = "id", updatable = false)
     @JsonProperty(access = Access.WRITE_ONLY)
     private Artist artist;
 
+    @NotBlank
     private String name;
 
     @Column(updatable = false)
@@ -41,5 +45,4 @@ public class Illustration {
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
-
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -30,12 +31,12 @@ public class IllustrationsController {
     }
 
     @PostMapping
-    public Illustration createNewIllustration(@RequestBody Illustration illustration) {
+    public Illustration createNewIllustration(@RequestBody @Valid Illustration illustration) {
         return illustrationsService.createIllustration(illustration);
     }
 
     @PutMapping
-    public Illustration updateIllustration(@RequestBody Illustration illustration) {
+    public Illustration updateIllustration(@RequestBody @Valid Illustration illustration) {
         return illustrationsService.updateIllustration(illustration);
     }
 
