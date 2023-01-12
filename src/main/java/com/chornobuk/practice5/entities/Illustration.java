@@ -48,4 +48,7 @@ public class Illustration {
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @JsonView(Views.IllustrationCreate.class)
+    private Boolean aiGenerated;
 }

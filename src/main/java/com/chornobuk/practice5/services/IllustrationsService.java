@@ -11,5 +11,5 @@ public interface IllustrationsService {
 
     public Illustration createIllustration(Illustration illustration);
 
-    public Iterable<Illustration> getPaginatedIllustrations(String artist, String name, int page);
+    public Iterable<Illustration> getPaginatedIllustrations(String name, boolean aiGenerated, int page);
 }
