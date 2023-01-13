@@ -50,7 +50,6 @@ public class IllustrationsController {
         illustrationsService.deleteById(id);
     }
 
-    // TODO add required for page and other params
     @GetMapping
     public Iterable<Illustration> getPaginatedIllustrations(@RequestParam String name, @RequestParam boolean aiGenerated,
             @RequestParam int page) {
