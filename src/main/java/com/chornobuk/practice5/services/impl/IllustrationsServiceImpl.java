@@ -1,9 +1,13 @@
 package com.chornobuk.practice5.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 import com.chornobuk.practice5.entities.Illustration;
 import com.chornobuk.practice5.services.IllustrationsService;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import com.chornobuk.practice5.repositories.IllustrationsRepository;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +30,9 @@ public class IllustrationsServiceImpl implements IllustrationsService {
 
     @Override
     public Illustration createIllustration(Illustration illustration) {
-        illustration.setCreatedAt(LocalDateTime.now());
+        illustration.setCreatedAt(LocalDateTime.of(2023, 1, 1, 11, 1));
         illustration.setImageUrl("url");
+        illustration.setId(null);//to prevent overriding existed entities
         return illustrationsRepository.save(illustration);
     }
 
@@ -38,7 +43,11 @@ public class IllustrationsServiceImpl implements IllustrationsService {
 
     @Override
     public Illustration getById(Long id) {
+        try {
         return illustrationsRepository.findById(id).get();
+        } catch(NoSuchElementException e) {
+            throw new EntityNotFoundException("illustration not found");
+        }
     }
 
     @Override
