@@ -1,6 +1,7 @@
 package com.chornobuk.practice5.entities;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -33,14 +34,12 @@ public class Illustration {
     private Long id;
 
     @NotNull
-    @JsonView(Views.IllustrationCreate.class)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", referencedColumnName = "id", updatable = false)
     @JsonProperty(access = Access.WRITE_ONLY)
     private Artist artist;
 
     @NotBlank
-    @JsonView(Views.IllustrationCreate.class)
     private String name;
 
     @Column(updatable = false)
@@ -49,6 +48,23 @@ public class Illustration {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @JsonView(Views.IllustrationCreate.class)
+    @NotNull
     private Boolean aiGenerated;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, artist, name, imageUrl, createdAt, aiGenerated);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Illustration illustration))
+            return false;
+        return id.equals(illustration.id) && artist.equals(illustration.artist) && name.equals(illustration.name)
+                && imageUrl.equals(illustration.imageUrl) && createdAt.equals(illustration.createdAt)
+                && aiGenerated == illustration.aiGenerated;
+    }
+
 }
