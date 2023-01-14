@@ -1,19 +1,30 @@
 services:
-  db:
+  arts:
     image: mysql:latest
     restart: always
     environment:
       MYSQL_DATABASE: 'arts'
       MYSQL_USER: 'admin'
       MYSQL_PASSWORD: 'admin'
-      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'admin'
     ports:
       - '3306:3306'
-    expose:
-      # Opens port 3306 on the container
-      - '3306'
     volumes:
-      - my-db:/var/lib/mysql
-# Names our volume
-volumes:
-  my-db:
+      - ./.docker/arts-db:/var/lib/mysql
+      - ./sql/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
+      - ./sql/init-data.sql:/docker-entrypoint-initdb.d/init-data.sql
+
+  arts-test:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'arts-test'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'admin'
+      MYSQL_ROOT_PASSWORD: 'admin'
+    ports:
+      - '3307:3306'
+    volumes:
+      - ./.docker/arts-test-db:/var/lib/mysql
+      - ./sql/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql
+      - ./sql/init-data.sql:/docker-entrypoint-initdb.d/init-data.sql
