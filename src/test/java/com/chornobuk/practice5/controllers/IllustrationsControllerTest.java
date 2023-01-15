@@ -1,8 +1,6 @@
 package com.chornobuk.practice5.controllers;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.chornobuk.practice5.data.Artists;
 import com.chornobuk.practice5.data.Illustrations;
 import com.chornobuk.practice5.entities.Illustration;
-import com.chornobuk.practice5.repositories.IllustrationsRepository;
-import com.chornobuk.practice5.services.IllustrationsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,23 +32,20 @@ public class IllustrationsControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
-    IllustrationsService illustrationsService;
-
     @Test
     public void getIllustrationByIdSuccessful() throws Exception {
-        Illustration illustration = new Illustration();
-        illustration.setId(1L);
-        illustration.setArtist(Artists.getById(1L));
-        illustration.setImageUrl("url");
-        illustration.setName("illustration1.2");
-        illustration.setAiGenerated(false);
+        Illustration expected = new Illustration();
+        expected.setId(1L);
+        expected.setArtist(Artists.getById(1L));
+        expected.setImageUrl("url");
+        expected.setName("illustration1.2");
+        expected.setAiGenerated(false);
         String responseBody = mockMvc.perform(get("/illustrations/1"))
                 .andExpectAll(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         Illustration actual = objectMapper.readValue(responseBody, Illustration.class);
-        illustration.setUpdatedAt(actual.getUpdatedAt());
-        assertEquals(illustration, actual);
+        expected.setUpdatedAt(actual.getUpdatedAt());
+        assertEquals(expected, actual);
     };
 
     @Test
@@ -117,7 +110,7 @@ public class IllustrationsControllerTest {
     @Test
     public void createIllustrationMissedAiGenerated() throws Exception {
         Illustration newIllustration = new Illustration();
-        newIllustration.setName("");
+        newIllustration.setName("test");
         newIllustration.setArtist(Artists.getById(1L));
         newIllustration.setAiGenerated(null);
         mockMvc.perform(
@@ -146,7 +139,11 @@ public class IllustrationsControllerTest {
                 .getResponse()
                 .getContentAsString();
         Illustration result = objectMapper.readValue(responseBody, Illustration.class);
+        // entities are the same but with different id
         assertNotEquals(expected.getId(), result.getId());
+        expected.setId(result.getId());
+        expected.setUpdatedAt(result.getUpdatedAt());
+        assertEquals(expected, result);
     }
 
     @Test
