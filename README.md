@@ -1,3 +1,5 @@
 # How to run?
-1. run docker-compose to create test and dev databases. docker-compose will create a hidden folder .docker for dbs' data.
-2. run application or tests (test for deleting an entity passes only once because entity will be deleted from test-db after fist run)
+1. open project's root directory in the terminal
+2. run `docker-compose up -d` in terminal to create test and dev databases. 
+docker-compose uses sql scripts in `sql` folder to create tables and add data.
+3. run application or tests (test for deleting an illustration passes only once because entity will be deleted from test-db after fist run)
