@@ -4,6 +4,7 @@ import com.chornobuk.practice5.entities.Illustration;
 import com.chornobuk.practice5.services.IllustrationsService;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
+@Validated
 @RequestMapping("illustrations")
 public class IllustrationsController {
 
@@ -49,8 +53,8 @@ public class IllustrationsController {
 
     @GetMapping
     public Iterable<Illustration> getPaginatedIllustrations(@RequestParam String name,
-            @RequestParam boolean aiGenerated, @RequestParam int page) {
-
+            @RequestParam boolean aiGenerated, @RequestParam Integer page) {
+            
         return illustrationsService.getPaginatedIllustrations(name, aiGenerated, page);
     }
 }

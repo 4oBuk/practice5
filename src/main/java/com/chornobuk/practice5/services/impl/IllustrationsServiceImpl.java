@@ -4,13 +4,14 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 import com.chornobuk.practice5.entities.Illustration;
+import com.chornobuk.practice5.exceptions.CustomIllegalArgumentException;
+import com.chornobuk.practice5.exceptions.EntityNotFoundException;
 import com.chornobuk.practice5.services.IllustrationsService;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import com.chornobuk.practice5.repositories.IllustrationsRepository;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,13 +34,17 @@ public class IllustrationsServiceImpl implements IllustrationsService {
     public Illustration createIllustration(Illustration illustration) {
         illustration.setUpdatedAt(LocalDateTime.now());
         illustration.setImageUrl("url");
-        illustration.setId(null);// to prevent overriding existed entities
+        illustration.setId(null);// to prevent overriding existing entities
         return illustrationsRepository.save(illustration);
     }
 
     @Override
     public void deleteById(Long id) {
-        illustrationsRepository.deleteById(id);
+        try {
+            illustrationsRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("illustration not found");
+        }
     }
 
     @Override
@@ -53,6 +58,10 @@ public class IllustrationsServiceImpl implements IllustrationsService {
 
     @Override
     public Iterable<Illustration> getPaginatedIllustrations(String name, boolean aiGenerated, int page) {
+        if(page < 0) {
+            throw new CustomIllegalArgumentException("page cannot be negative");
+        }
+    
         Pageable pageable = PageRequest.of(page, illustrationsPerPage);
         Page<Illustration> pageData = illustrationsRepository.findAllByNameContainingAndAiGenerated(name, aiGenerated,
                 pageable);
