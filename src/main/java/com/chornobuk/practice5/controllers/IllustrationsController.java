@@ -36,7 +36,6 @@ public class IllustrationsController {
         return illustrationsService.createIllustration(illustration);
     }
 
-    
     @PutMapping
     public Illustration updateIllustration(@RequestBody @Valid Illustration illustration) {
         return illustrationsService.updateIllustration(illustration);
@@ -49,8 +48,8 @@ public class IllustrationsController {
     }
 
     @GetMapping
-    public Iterable<Illustration> getPaginatedIllustrations(@RequestParam String name, @RequestParam boolean aiGenerated,
-            @RequestParam int page) {
+    public Iterable<Illustration> getPaginatedIllustrations(@RequestParam String name,
+            @RequestParam boolean aiGenerated, @RequestParam int page) {
 
         return illustrationsService.getPaginatedIllustrations(name, aiGenerated, page);
     }

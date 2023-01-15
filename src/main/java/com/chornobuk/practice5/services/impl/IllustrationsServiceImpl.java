@@ -18,34 +18,35 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class IllustrationsServiceImpl implements IllustrationsService {
-   
+
     private final int illustrationsPerPage;
-    
+
     private final IllustrationsRepository illustrationsRepository;
 
-    public IllustrationsServiceImpl(IllustrationsRepository illustrationsRepository, @Value("${illustrations.per.page}") int illustrationsPerPage) {
+    public IllustrationsServiceImpl(IllustrationsRepository illustrationsRepository,
+            @Value("${illustrations.per.page}") int illustrationsPerPage) {
         this.illustrationsRepository = illustrationsRepository;
         this.illustrationsPerPage = illustrationsPerPage;
     }
 
     @Override
     public Illustration createIllustration(Illustration illustration) {
-        illustration.setCreatedAt(LocalDateTime.of(2023, 1, 1, 11, 1));
+        illustration.setUpdatedAt(LocalDateTime.now());
         illustration.setImageUrl("url");
-        illustration.setId(null);//to prevent overriding existed entities
+        illustration.setId(null);// to prevent overriding existed entities
         return illustrationsRepository.save(illustration);
     }
 
     @Override
     public void deleteById(Long id) {
-       illustrationsRepository.deleteById(id);
+        illustrationsRepository.deleteById(id);
     }
 
     @Override
     public Illustration getById(Long id) {
         try {
-        return illustrationsRepository.findById(id).get();
-        } catch(NoSuchElementException e) {
+            return illustrationsRepository.findById(id).get();
+        } catch (NoSuchElementException e) {
             throw new EntityNotFoundException("illustration not found");
         }
     }
@@ -53,13 +54,15 @@ public class IllustrationsServiceImpl implements IllustrationsService {
     @Override
     public Iterable<Illustration> getPaginatedIllustrations(String name, boolean aiGenerated, int page) {
         Pageable pageable = PageRequest.of(page, illustrationsPerPage);
-        Page<Illustration> pageData = illustrationsRepository.findAllByNameContainingAndAiGenerated(name, aiGenerated, pageable);
-        return pageData.getContent(); 
+        Page<Illustration> pageData = illustrationsRepository.findAllByNameContainingAndAiGenerated(name, aiGenerated,
+                pageable);
+        return pageData.getContent();
     }
 
     @Override
     public Illustration updateIllustration(Illustration illustration) {
-        return illustrationsRepository.save(illustration);
+        illustration.setUpdatedAt(LocalDateTime.now());
+        return illustrationsRepository.saveAndFlush(illustration);
     }
 
 }

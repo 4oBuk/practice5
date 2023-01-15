@@ -25,12 +25,12 @@ public class ArtistsControllerTest {
     ObjectMapper objectMapper;
 
     @Test
-    public void getAllArtists() throws Exception{
-        String jsonArtists = objectMapper.writeValueAsString(Artists.getAllArtists());
+    public void getAllArtists() throws Exception {
+        String jsonArtists = objectMapper.writeValueAsString(Artists.ARTISTS);
         String responseBody = this.mockMvc.perform(get("/artists"))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andReturn().getResponse().getContentAsString();
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
         assertEquals(jsonArtists, responseBody);
     }
 }

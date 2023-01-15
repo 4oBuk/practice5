@@ -2,7 +2,9 @@ package com.chornobuk.practice5.entities;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import jakarta.persistence.Column;
@@ -12,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +24,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@JsonInclude(Include.NON_NULL)
+@EqualsAndHashCode
 public class Artist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +42,7 @@ public class Artist {
     private String nickname;
 
     @Column(updatable = false)
-    private LocalDateTime registrationDate;
+    private LocalDateTime updatedAt;
+
+
 }
