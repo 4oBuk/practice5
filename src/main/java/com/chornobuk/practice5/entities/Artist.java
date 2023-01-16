@@ -44,5 +44,4 @@ public class Artist {
     @Column(updatable = false)
     private LocalDateTime updatedAt;
 
-
 }

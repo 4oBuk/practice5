@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
-public class CustomExceptionHandler{
+public class CustomExceptionHandler {
 
     @ExceptionHandler(value = { EntityNotFoundException.class })
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -20,7 +20,7 @@ public class CustomExceptionHandler{
         return ResponseEntity.status(HttpStatusCode.valueOf(404)).body(exception.getMessage());
     }
 
-    @ExceptionHandler(value = {CustomIllegalArgumentException.class})
+    @ExceptionHandler(value = { CustomIllegalArgumentException.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleCustomIllegalArgumentException(CustomIllegalArgumentException exception) {
         log.debug(exception.getMessage());

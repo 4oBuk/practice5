@@ -52,7 +52,7 @@ public class IllustrationsController {
     @GetMapping
     public Iterable<Illustration> getPaginatedIllustrations(@RequestParam String name,
             @RequestParam boolean aiGenerated, @RequestParam Integer page) {
-            
+
         return illustrationsService.getPaginatedIllustrations(name, aiGenerated, page);
     }
 }
