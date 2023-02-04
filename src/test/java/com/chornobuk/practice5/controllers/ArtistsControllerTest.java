@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.chornobuk.practice5.data.Artists;
+import com.chornobuk.practice5.repositories.ArtistsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,9 +24,12 @@ public class ArtistsControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    ArtistsRepository artistsRepository;
+
     @Test
     public void getAllArtists() throws Exception {
-        String jsonArtists = objectMapper.writeValueAsString(Artists.ARTISTS);
+        String jsonArtists = objectMapper.writeValueAsString(artistsRepository.findAll());
         String responseBody = this.mockMvc.perform(get("/artists"))
                 .andDo(print())
                 .andExpect(status().isOk())

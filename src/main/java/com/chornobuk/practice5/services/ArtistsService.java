@@ -4,4 +4,5 @@ import com.chornobuk.practice5.entities.Artist;
 
 public interface ArtistsService {
     Iterable<Artist> getAllArtists();
+    Artist getById(Long id);
 }

@@ -1,6 +1,7 @@
 package com.chornobuk.practice5.services.impl;
 
 import com.chornobuk.practice5.entities.Artist;
+import com.chornobuk.practice5.exceptions.EntityNotFoundException;
 import com.chornobuk.practice5.repositories.ArtistsRepository;
 import com.chornobuk.practice5.services.ArtistsService;
 
@@ -18,4 +19,10 @@ public class ArtistsServiceImpl implements ArtistsService {
     public Iterable<Artist> getAllArtists() {
         return artistsRepository.findAll();
     }
+
+    @Override
+    public Artist getById(Long id) {
+        return artistsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
 }
