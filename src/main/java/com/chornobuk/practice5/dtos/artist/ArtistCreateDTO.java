@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ArtistCreateDTO {
+    // todo add validation to all dtos
     private String email;
 
     private String password;

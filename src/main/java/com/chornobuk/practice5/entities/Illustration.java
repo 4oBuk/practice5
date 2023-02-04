@@ -11,13 +11,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
@@ -26,24 +25,22 @@ import lombok.Setter;
 @AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
 @EqualsAndHashCode
+@ToString
 public class Illustration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @ManyToOne()
     @JoinColumn(name = "artist_id", referencedColumnName = "id", updatable = false)
     private Artist artist;
 
-    @NotBlank
     private String name;
 
     private String imageUrl;
 
     private LocalDateTime updatedAt;
 
-    @NotNull
     private Boolean aiGenerated;
 }

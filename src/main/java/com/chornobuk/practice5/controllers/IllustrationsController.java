@@ -1,5 +1,7 @@
 package com.chornobuk.practice5.controllers;
 
+import com.chornobuk.practice5.dtos.illustration.IllustrationCreateDTO;
+import com.chornobuk.practice5.dtos.illustration.IllustrationUpdateDTO;
 import com.chornobuk.practice5.entities.Illustration;
 import com.chornobuk.practice5.services.IllustrationsService;
 
@@ -34,12 +36,12 @@ public class IllustrationsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Illustration createIllustration(@RequestBody @Valid Illustration illustration) {
+    public Illustration createIllustration(@RequestBody @Valid IllustrationCreateDTO illustration) {
         return illustrationsService.createIllustration(illustration);
     }
 
     @PutMapping
-    public Illustration updateIllustration(@RequestBody @Valid Illustration illustration) {
+    public Illustration updateIllustration(@RequestBody @Valid IllustrationUpdateDTO illustration) {
         return illustrationsService.updateIllustration(illustration);
     }
 
