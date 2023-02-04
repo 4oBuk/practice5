@@ -1,20 +1,24 @@
 package com.chornobuk.practice5.controllers;
 
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.chornobuk.practice5.data.Artists;
-import com.chornobuk.practice5.data.Illustrations;
+import com.chornobuk.practice5.dtos.illustration.IllustrationCreateDTO;
+import com.chornobuk.practice5.dtos.illustration.IllustrationUpdateDTO;
 import com.chornobuk.practice5.entities.Illustration;
+import com.chornobuk.practice5.repositories.IllustrationsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -30,27 +34,30 @@ public class IllustrationsControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private IllustrationsRepository illustrationsRepository;
+
+    @Value("${illustrations.per.page}")
+    int illustrationsPerPage;
 
     @Test
     public void getIllustrationByIdSuccessful() throws Exception {
-        Illustration expected = new Illustration();
-        expected.setId(1L);
-        expected.setArtist(Artists.getById(1L));
-        expected.setImageUrl("url");
-        expected.setName("illustration1.2");
-        expected.setAiGenerated(false);
         String responseBody = mockMvc.perform(get("/illustrations/1"))
                 .andExpectAll(status().isOk())
                 .andReturn().getResponse().getContentAsString();
+        Illustration expected = illustrationsRepository.findById(1L).get();
+        // set password to null because API doesn't return password
+        expected.getArtist().setPassword(null);
         Illustration actual = objectMapper.readValue(responseBody, Illustration.class);
-        expected.setUpdatedAt(actual.getUpdatedAt());
+
         assertEquals(expected, actual);
     };
 
     @Test
     public void getIllustrationByIdNoEntity() throws Exception {
-        mockMvc.perform(get("/illustrations/500"))
+        mockMvc.perform(get("/illustrations/" + Long.MAX_VALUE))
                 .andExpect(status().isNotFound());
     }
 
@@ -62,78 +69,89 @@ public class IllustrationsControllerTest {
 
     @Test
     public void createIllustrationSuccessful() throws Exception {
-        Illustration expected = new Illustration();
-        expected.setAiGenerated(false);
-        expected.setName("testAiIllustration");
-        expected.setImageUrl("url");
-        expected.setArtist(Artists.getById(1L));
+        IllustrationCreateDTO createDto = new IllustrationCreateDTO();
+        createDto.setAiGenerated(false);
+        createDto.setName("testAiIllustration");
+        createDto.setArtistId(1L);
         String responseBody = mockMvc.perform(
                 post("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(expected)))
+                        .content(objectMapper.writeValueAsString(createDto)))
                 .andExpectAll(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        Illustration result = objectMapper.readValue(responseBody, Illustration.class);
-        expected.setId(result.getId());
-        expected.setUpdatedAt(result.getUpdatedAt());
-        assertEquals(expected, result);
+        Illustration actual = objectMapper.readValue(responseBody, Illustration.class);
+        Illustration expected = illustrationsRepository.findById(actual.getId()).get();
+        // set password to null because API doesn't return password
+        expected.getArtist().setPassword(null);// TODO: solve problem with time
+        actual.setUpdatedAt(expected.getUpdatedAt());
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void createIllustrationUnexistedUser() throws Exception {
+        IllustrationCreateDTO createDto = new IllustrationCreateDTO();
+        createDto.setAiGenerated(false);
+        createDto.setName("testAiIllustration");
+        createDto.setArtistId(Long.MAX_VALUE);
+        mockMvc.perform(
+                post("/illustrations")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createDto)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void createIllustrationEmptyName() throws Exception {
-        Illustration newIllustration = new Illustration();
-        newIllustration.setName("");
-        newIllustration.setArtist(Artists.getById(1L));
-        newIllustration.setAiGenerated(false);
-        System.out.println(objectMapper.writeValueAsString(newIllustration));
+        IllustrationCreateDTO createDto = new IllustrationCreateDTO();
+        createDto.setName("");
+        createDto.setArtistId(1L);
+        createDto.setAiGenerated(false);
+        System.out.println(objectMapper.writeValueAsString(createDto));
         mockMvc.perform(
                 post("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newIllustration)))
+                        .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void createIllustrationNullArtist() throws Exception {
-        Illustration newIllustration = new Illustration();
-        newIllustration.setName("test");
-        newIllustration.setAiGenerated(false);
+        IllustrationCreateDTO createDto = new IllustrationCreateDTO();
+        createDto.setName("test");
+        createDto.setAiGenerated(false);
         mockMvc.perform(
                 post("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newIllustration)))
+                        .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void createIllustrationMissedAiGenerated() throws Exception {
-        Illustration newIllustration = new Illustration();
-        newIllustration.setName("test");
-        newIllustration.setArtist(Artists.getById(1L));
-        newIllustration.setAiGenerated(null);
+        IllustrationCreateDTO createDto = new IllustrationCreateDTO();
+        createDto.setName("test");
+        createDto.setArtistId(1L);
+        createDto.setAiGenerated(null);
         mockMvc.perform(
                 post("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newIllustration)))
+                        .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void createIllustrationAttemptToRewriteEntity() throws Exception {
-        Illustration expected = new Illustration();
-        expected.setAiGenerated(false);
-        expected.setName("testAiIllustration");
-        expected.setId(1L);
-        expected.setImageUrl("url");
-        expected.setArtist(Artists.getById(1L));
-        expected.setUpdatedAt(LocalDateTime.of(2023, 1, 1, 11, 1));
-
+        Illustration expected = illustrationsRepository.findById(1L).get();
+        IllustrationCreateDTO createDto = new IllustrationCreateDTO();
+        createDto.setAiGenerated(expected.getAiGenerated());
+        createDto.setName(expected.getName());
+        createDto.setArtistId(expected.getArtist().getId());
         String responseBody = mockMvc.perform(
                 post("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(expected)))
+                        .content(objectMapper.writeValueAsString(createDto)))
                 .andExpectAll(status().isCreated())
                 .andReturn()
                 .getResponse()
@@ -142,63 +160,52 @@ public class IllustrationsControllerTest {
         // entities are the same but with different id
         assertNotEquals(expected.getId(), result.getId());
         expected.setId(result.getId());
-        expected.setUpdatedAt(result.getUpdatedAt());
+        expected.getArtist().setPassword(null);
+        result.setUpdatedAt(expected.getUpdatedAt());
         assertEquals(expected, result);
     }
 
     @Test
     public void updateIllustrationSuccessful() throws Exception {
-        Illustration expected = new Illustration();
-        expected.setId(3L);
-        expected.setName("updated1.4");
-        expected.setArtist(Artists.getById(1L));
-        expected.setAiGenerated(false);
-        expected.setImageUrl("url");
+        IllustrationUpdateDTO updateDto = new IllustrationUpdateDTO();
+        updateDto.setId(3L);
+        updateDto.setName("updated1.4");
+        updateDto.setAiGenerated(false);
         String responseBody = mockMvc.perform(
                 put("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(expected)))
+                        .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpectAll(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
         Illustration result = objectMapper.readValue(responseBody, Illustration.class);
-        expected.setUpdatedAt(result.getUpdatedAt());
+        Illustration expected = illustrationsRepository.findById(result.getId()).get();
+        expected.getArtist().setPassword(null);
+        result.setUpdatedAt(expected.getUpdatedAt());
         assertEquals(expected, result);
     }
 
     @Test
     public void updateIllustrationNoEntity() throws Exception {
-        Illustration expected = new Illustration();
-        expected.setId(1000L);
-        expected.setName("new Entity");
-        expected.setArtist(Artists.getById(1L));
-        expected.setAiGenerated(false);
-        expected.setImageUrl("url");
-        String responseBody = mockMvc.perform(
+        IllustrationUpdateDTO updateDto = new IllustrationUpdateDTO();
+        updateDto.setId(Long.MAX_VALUE);
+        updateDto.setName("new Entity");
+        updateDto.setAiGenerated(false);
+        mockMvc.perform(
                 put("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(expected)))
-                .andExpectAll(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        Illustration result = objectMapper.readValue(responseBody, Illustration.class);
-        expected.setUpdatedAt(result.getUpdatedAt());
-        expected.setId(result.getId());
-        assertEquals(expected, result);
+                        .content(objectMapper.writeValueAsString(updateDto)))
+                .andExpectAll(status().isNotFound());
     }
 
     @Test
     public void updatableIllustrationBlankName() throws Exception {
-        Illustration expected = new Illustration();
+        IllustrationUpdateDTO expected = new IllustrationUpdateDTO();
         expected.setId(3L);
         expected.setName("");
-        expected.setArtist(Artists.getById(1L));
         expected.setAiGenerated(false);
-        expected.setImageUrl("url");
         mockMvc.perform(
                 put("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -208,12 +215,10 @@ public class IllustrationsControllerTest {
 
     @Test
     public void updateIllustrationAiGeneratedNull() throws Exception {
-        Illustration expected = new Illustration();
+        IllustrationUpdateDTO expected = new IllustrationUpdateDTO();
         expected.setId(3L);
         expected.setName("test");
-        expected.setArtist(Artists.getById(1L));
         expected.setAiGenerated(null);
-        expected.setImageUrl("url");
         mockMvc.perform(
                 put("/illustrations")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -221,38 +226,57 @@ public class IllustrationsControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ! works only once because entity will be deleted
     @Test
     public void deleteByIdSuccessful() throws Exception {
-        mockMvc.perform(delete("/illustrations/4"))
+        Illustration illustration = illustrationsRepository.findById(1L).get();
+        illustration.setId(null);
+        Illustration saved = illustrationsRepository.save(illustration);
+        mockMvc.perform(delete("/illustrations/" + saved.getId()))
                 .andExpect(status().isOk());
+        assertFalse(illustrationsRepository.existsById(saved.getId()));
     }
 
     @Test
     public void deleteByIdNoEntityById() throws Exception {
-        mockMvc.perform(delete("/illustrations/4"))
+        mockMvc.perform(delete("/illustrations/" + Long.MAX_VALUE))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void getPaginatedIllustrationsSuccessful() throws Exception {
-        String responseBody = mockMvc.perform(
-                get("/illustrations?name=23.&aiGenerated=false&page=1"))
+        int page = 1;
+        boolean aiGenerated = false;
+        String name = "23.";
+        String params = String.format("name=%s&aiGenerated=%b&page=%d", name, aiGenerated, page);
+        String response = mockMvc.perform(
+                get("/illustrations?" + params))
                 .andExpectAll(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        String expected = objectMapper.writeValueAsString(Illustrations.getThirdUserSecondPageIllustrations());
-        assertEquals(expected, responseBody);
+        Pageable pageable = PageRequest.of(page, illustrationsPerPage);
+        Page<Illustration> pageData = illustrationsRepository.findAllByNameContainingAndAiGenerated(name,
+                aiGenerated,
+                pageable);
+        String expected = objectMapper.writeValueAsString(pageData.getContent());
+        assertEquals(expected, response);
     }
 
     @Test
     public void getPaginatedIllustrationsEmptyName() throws Exception {
+        int page = 1;
+        boolean aiGenerated = true;
+        String name = "";
+        String params = String.format("name=%s&aiGenerated=%b&page=%d", name, aiGenerated, page);
         String responseBody = mockMvc.perform(
-                get("/illustrations?name=&aiGenerated=true&page=1"))
+                get("/illustrations?" + params))
                 .andExpectAll(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        String expected = objectMapper.writeValueAsString(Illustrations.getSecondPageAiGenerated());
+        Pageable pageable = PageRequest.of(page, illustrationsPerPage);
+        Page<Illustration> pageData = illustrationsRepository.findAllByNameContainingAndAiGenerated(name,
+                aiGenerated,
+                pageable);
+        String expected = objectMapper.writeValueAsString(pageData.getContent());
         assertEquals(expected, responseBody);
     }
 
